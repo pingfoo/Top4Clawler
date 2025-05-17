@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
@@ -25,6 +26,7 @@ class Paper:
 
 def fetch_ieee_sp(year: int) -> List[Paper]:
     """Fetch papers from IEEE S&P for the given year."""
+
     candidates = [
         f"https://www.ieee-security.org/TC/SP{year}/program.html",
         f"https://sp{year}.ieee-security.org/program.html",
@@ -46,6 +48,7 @@ def fetch_ieee_sp(year: int) -> List[Paper]:
 
 def fetch_acm_ccs(year: int) -> List[Paper]:
     """Fetch papers from ACM CCS for the given year."""
+
     candidates = [
         f"https://www.sigsac.org/ccs/CCS{year}/program.html",
         f"https://www.sigsac.org/ccs/CCS{year}/program/",
@@ -68,6 +71,7 @@ def fetch_acm_ccs(year: int) -> List[Paper]:
 def fetch_usenix_security(year: int) -> List[Paper]:
     """Fetch papers from USENIX Security for the given year."""
     candidates = [
+        f"https://www.usenix.org/conference/usenixsecurity{year}/technical-sessions",
         f"https://www.usenix.org/conference/usenixsecurity{year}/presentation",
         f"https://www.usenix.org/conference/usenixsecurity{year}/program",
     ]
@@ -92,6 +96,7 @@ def fetch_ndss(year: int) -> List[Paper]:
     candidates = [
         f"https://www.ndss-symposium.org/ndss{year}-program/",
         f"https://www.ndss-symposium.org/ndss{year}/program/",
+        f"https://www.ndss-symposium.org/ndss{year}/accepted-papers/",
     ]
     text = _safe_get(candidates)
     if text is None:
