@@ -3,6 +3,19 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from typing import List, Optional
 
+
+def _safe_get(urls: List[str]) -> Optional[str]:
+    """Return the body of the first successfully retrieved URL."""
+    for url in urls:
+        try:
+            resp = requests.get(url)
+            if resp.status_code == 200:
+                return resp.text
+        except requests.RequestException:
+            continue
+    print(f"Could not fetch any page from: {', '.join(urls)}")
+    return None
+
 @dataclass
 class Paper:
     title: str
@@ -12,10 +25,14 @@ class Paper:
 
 def fetch_ieee_sp(year: int) -> List[Paper]:
     """Fetch papers from IEEE S&P for the given year."""
-    url = f"https://www.ieee-security.org/TC/SP{year}/program.html"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    candidates = [
+        f"https://www.ieee-security.org/TC/SP{year}/program.html",
+        f"https://sp{year}.ieee-security.org/program.html",
+    ]
+    text = _safe_get(candidates)
+    if text is None:
+        return []
+    soup = BeautifulSoup(text, "html.parser")
     papers = []
     for item in soup.select("div.paper"):
         title = item.select_one("div.title").get_text(strip=True)
@@ -29,10 +46,16 @@ def fetch_ieee_sp(year: int) -> List[Paper]:
 
 def fetch_acm_ccs(year: int) -> List[Paper]:
     """Fetch papers from ACM CCS for the given year."""
-    url = f"https://www.sigsac.org/ccs/CCS{year}/program.html"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    candidates = [
+        f"https://www.sigsac.org/ccs/CCS{year}/program.html",
+        f"https://www.sigsac.org/ccs/CCS{year}/program/",
+        f"https://www.sigsac.org/ccs/CCS{year}/Program/",
+        f"https://www.sigsac.org/ccs/CCS{year}/accepted-papers.html",
+    ]
+    text = _safe_get(candidates)
+    if text is None:
+        return []
+    soup = BeautifulSoup(text, "html.parser")
     papers = []
     for item in soup.select("div.paper"):
         title = item.select_one("h3").get_text(strip=True)
@@ -46,10 +69,16 @@ def fetch_acm_ccs(year: int) -> List[Paper]:
 
 def fetch_usenix_security(year: int) -> List[Paper]:
     """Fetch papers from USENIX Security for the given year."""
-    url = f"https://www.usenix.org/conference/usenixsecurity{year}/presentation"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    yy = str(year)[2:]
+    candidates = [
+        f"https://www.usenix.org/conference/usenixsecurity{year}/presentation",
+        f"https://www.usenix.org/conference/usenixsecurity{year}/program",
+        f"https://www.usenix.org/conference/usenixsecurity{yy}/technical-sessions",
+    ]
+    text = _safe_get(candidates)
+    if text is None:
+        return []
+    soup = BeautifulSoup(text, "html.parser")
     papers = []
     for item in soup.select("div.node--type-paper"):
         title = item.select_one("h3.node-title").get_text(strip=True)
@@ -64,10 +93,15 @@ def fetch_usenix_security(year: int) -> List[Paper]:
 
 def fetch_ndss(year: int) -> List[Paper]:
     """Fetch papers from NDSS for the given year."""
-    url = f"https://www.ndss-symposium.org/ndss{year}-program/"
-    resp = requests.get(url)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    candidates = [
+        f"https://www.ndss-symposium.org/ndss{year}-program/",
+        f"https://www.ndss-symposium.org/ndss{year}/program/",
+        f"https://www.ndss-symposium.org/ndss{year}/accepted-papers/",
+    ]
+    text = _safe_get(candidates)
+    if text is None:
+        return []
+    soup = BeautifulSoup(text, "html.parser")
     papers = []
     for item in soup.select("div.paper"):
         title = item.select_one("div.title").get_text(strip=True)
