@@ -10,3 +10,11 @@ python -m top4crawler.main YEAR CONFERENCE [--output FILE]
 ```
 
 `CONFERENCE` can be one of `sp`, `ccs`, `usenix`, or `ndss`. Data will be printed as JSON or written to the specified output file.
+
+The scraper attempts several known program URLs for each conference. If none of
+them are reachable (e.g. because the program page for the given year has not yet
+been published), an empty list will be returned.
+
+For IEEE S&P 2021 you can provide an `IEEE_API_KEY` environment variable so the
+tool uses the IEEE Xplore Metadata API. Other conferences are scraped directly
+or queried via Crossref.
