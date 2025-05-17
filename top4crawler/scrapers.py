@@ -26,7 +26,6 @@ class Paper:
 
 def fetch_ieee_sp(year: int) -> List[Paper]:
     """Fetch papers from IEEE S&P for the given year."""
-
     candidates = [
         f"https://www.ieee-security.org/TC/SP{year}/program.html",
         f"https://sp{year}.ieee-security.org/program.html",
@@ -48,7 +47,6 @@ def fetch_ieee_sp(year: int) -> List[Paper]:
 
 def fetch_acm_ccs(year: int) -> List[Paper]:
     """Fetch papers from ACM CCS for the given year."""
-
     candidates = [
         f"https://www.sigsac.org/ccs/CCS{year}/program.html",
         f"https://www.sigsac.org/ccs/CCS{year}/program/",

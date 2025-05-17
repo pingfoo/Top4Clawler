@@ -23,4 +23,3 @@ the conference website.
 ACM CCS metadata is retrieved via Crossref when possible and falls back to
 scraping the program page. USENIX Security and NDSS remain purely
 scraper-based but include several candidate URLs per year.
-
